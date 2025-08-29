@@ -80,9 +80,9 @@ def main():
             sae_cfg = cfg["sae"]
             out_path = os.path.join(run_dir, f"{model_label}_layer{layer}_{kind}_sae.pt")
             train_sae_on_acts(X, width=sae_cfg["width"], objective=sae_cfg["objective"], k=sae_cfg["k"],
-                              l1_coef=sae_cfg["l1_coef"], steps=sae_cfg["steps"],
-                              batch_size=sae_cfg["batch_size_tokens"]//X.shape[1], lr=sae_cfg["lr"],
-                              dead_feature_threshold=sae_cfg["dead_feature_threshold"], out_path=out_path)
+                              l1_coef=float(sae_cfg["l1_coef"]), steps=sae_cfg["steps"],
+                              batch_size=sae_cfg["batch_size_tokens"]//X.shape[1], lr=float(sae_cfg["lr"]),
+                              dead_feature_threshold=float(sae_cfg["dead_feature_threshold"]), out_path=out_path)
 
 if __name__ == "__main__":
     main()

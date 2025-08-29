@@ -5,10 +5,17 @@ data:
   dataset: wikitext
   subset: wikitext-103-raw-v1
   split: train
+run_name: demo
+seed: 42
+
+data:
+  dataset: wikitext
+  subset: wikitext-103-raw-v1
+  split: train
   text_column: text
-  num_docs: 2000        # number of documents to stream for anchors/training
-  max_length: 256       # truncate context
-  word_regex: "\w+"
+  num_docs: 100         # number of documents to stream for anchors/training
+  max_length: 128       # truncate context
+  word_regex: "\\w+"
 
 models:
   A:
@@ -24,7 +31,7 @@ layers:
 
 sae:
   width: 4096          # latent size m
-  l1_coef: 1e-3        # L1 penalty (if l1 objective)
+  l1_coef: 1e-4        # L1 penalty (if l1 objective) - reduced from 1e-3
   k: 64                # top-k (if k-sparse objective)
   objective: l1        # l1 | k_sparse
   lr: 2e-3
@@ -41,7 +48,7 @@ align:
   matching:
     metric: cosine
     mutual: true
-    threshold: 0.6
+    threshold: 0.3      # reduced from 0.6 to find more matches
 
 intervention:
   alpha: 5.0           # scale for feature injection

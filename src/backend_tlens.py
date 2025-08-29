@@ -34,10 +34,11 @@ def get_activations(handle: ModelHandle, texts: List[str], layer: int, kind: str
     acts = []
     used_positions = []
     hn = hook_name(layer, kind)
-    for i, text in enumerate(texts):
-        toks = handle.tokenizer(text, return_tensors="pt", truncation=True, max_length=max_length).to(handle.model.cfg.device)
-        cache = {}
-        _ = handle.model.run_with_cache(toks, names_filter=[hn], cache=cache)
+    from tqdm import tqdm
+    for i, text in enumerate(tqdm(texts, desc=f"Collecting activations")):
+        toks = handle.tokenizer(text, return_tensors="pt", truncation=True, max_length=max_length)
+        input_ids = toks["input_ids"].to(handle.model.cfg.device)
+        _, cache = handle.model.run_with_cache(input_ids, names_filter=[hn])
         A = cache[hn][0]  # [seq, d_model]
         L = A.shape[0]
         if positions_per_text is None:
