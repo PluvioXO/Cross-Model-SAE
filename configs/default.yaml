@@ -1,0 +1,47 @@
+run_name: demo
+seed: 42
+
+data:
+  dataset: wikitext
+  subset: wikitext-103-raw-v1
+  split: train
+  text_column: text
+  num_docs: 2000        # number of documents to stream for anchors/training
+  max_length: 256       # truncate context
+  word_regex: "\w+"
+
+models:
+  A:
+    name: EleutherAI/pythia-410m-deduped-v0
+    backend: tlens   # tlens (TransformerLens) | hf (experimental)
+  B:
+    name: gpt2-medium
+    backend: tlens
+
+layers:
+  target_layers: [5, 6, 7]  # can be overridden via CLI
+  hook_point: resid_pre     # resid_pre | mlp_out | attn_out
+
+sae:
+  width: 4096          # latent size m
+  l1_coef: 1e-3        # L1 penalty (if l1 objective)
+  k: 64                # top-k (if k-sparse objective)
+  objective: l1        # l1 | k_sparse
+  lr: 2e-3
+  batch_size_tokens: 32768
+  steps: 2500
+  dead_feature_threshold: 1e-6
+
+anchors:
+  per_doc_words: 64    # how many word-level anchors to sample per doc
+  max_pairs: 20000
+
+align:
+  method: procrustes   # procrustes | svcca
+  matching:
+    metric: cosine
+    mutual: true
+    threshold: 0.6
+
+intervention:
+  alpha: 5.0           # scale for feature injection
